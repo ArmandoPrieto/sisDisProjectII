@@ -16,5 +16,6 @@ Para crear un .jar con todas las clases del directorio:
 Para ejecutar el .jar desde consola:
 >java -jar -Djava.security.policy=server.policy GenericServer.jar 10
 >java -jar -Djava.security.policy=client.policy GenericClient.jar localhost  10
-OJO asegurarse de que ambos estén conectados a la misma IP si no da error  java.io.EOFException.
+
+OJO: asegurarse de que ambos estén conectados a la misma IP si no da error  java.io.EOFException.
 Parece que no es necesario start rmiregistry!
