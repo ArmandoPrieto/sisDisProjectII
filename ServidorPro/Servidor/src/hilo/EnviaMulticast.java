@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Arrays;
+import servidor.GenericServer;
 
 /**
  *
@@ -20,8 +21,10 @@ import java.util.Arrays;
  */
 public class EnviaMulticast extends Thread {
 
-    public EnviaMulticast() throws IOException {
-
+    GenericServer server;
+    
+    public EnviaMulticast(GenericServer server) throws IOException {
+        this.server = server;
     }
 
     public void run() {
@@ -30,24 +33,13 @@ public class EnviaMulticast extends Thread {
         try {
 
             enviador = new MulticastSocket(6789);
+            byte[] dato;
 
-// El dato que queramos enviar en el mensaje, como array de bytes.
-            byte[] dato = new byte[]{0};
+            String datoString = "0|"+server.portServer+"|"+server.name+"|";
+            dato = datoString.getBytes();
+            DatagramPacket dgp = new DatagramPacket(dato, dato.length, InetAddress.getByName("230.0.0.1"), 6789);
 
-            ByteBuffer b = ByteBuffer.allocate(4);
-//b.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
-
-            b.putInt(60000);
-
-            byte[] concatenate = new byte[dato.length + b.array().length];
-            System.arraycopy(dato, 0, concatenate, 0, dato.length);
-            System.arraycopy(b.array(), 0, concatenate, dato.length, b.array().length);
-
-// Usamos la direccion Multicast 230.0.0.1, por poner alguna dentro del rango
-// y el puerto 55557, uno cualquiera que esté libre.
-            DatagramPacket dgp = new DatagramPacket(concatenate, concatenate.length, InetAddress.getByName("230.0.0.1"), 6789);
-
-// Envío
+            // Envío
             enviador.send(dgp);
             System.out.println("Enviado");
         } catch (IOException ex) {

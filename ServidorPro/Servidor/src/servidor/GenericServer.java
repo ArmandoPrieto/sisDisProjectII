@@ -2,6 +2,7 @@ package servidor;
 
 import hilo.EscuchaMulticast;
 import hilo.EnviaMulticast;
+import hilo.EscuchaUnicast;
 import java.io.IOException;
 import servidor.Ejecutor;
 import java.rmi.*;
@@ -16,15 +17,20 @@ import java.util.List;
 // Fue conpilado y corrido usando jdk-1.2.2
 public class GenericServer {
 
-    private int port;
+    public int port;
+    public int portServer;
+    public int ipAddress;
+    public String name;
 
     public List<NodoServidor> nodoServidorList;
 
-    public GenericServer(int port) {
+    public GenericServer(int port,int portServer, String name) {
         this.nodoServidorList = new ArrayList<>();
         try {
 
             this.port = port;
+            this.portServer = portServer;
+            this.name = name;
             if (System.getSecurityManager() == null) {
                 System.setSecurityManager(new RMISecurityManager());
             }
@@ -47,10 +53,13 @@ public class GenericServer {
 
     public void startMulticast() throws IOException, InterruptedException {
 
+        EscuchaUnicast escuchaUni = new EscuchaUnicast(this);
+        escuchaUni.start();
+        
         EscuchaMulticast escucha = new EscuchaMulticast(this);
         escucha.start();
 
-        EnviaMulticast envia = new EnviaMulticast();
+        EnviaMulticast envia = new EnviaMulticast(this);
         envia.start();
         synchronized (this) {
             this.wait();
@@ -65,9 +74,10 @@ public class GenericServer {
     }
 
     public static void main(String args[]) {
-        int nroServ = 0, port = 0;
+        int nroServ = 0, port = 0,portServer=0;
+        String name="";
 
-        if (!((0 < args.length) && (args.length < 2))) {
+        if (!((0 < args.length) && (args.length < 4))) {
             System.err.print("Parametros incorrectos: ");
             System.err.println("CalculatorServer <port>");
             System.exit(1);
@@ -75,6 +85,8 @@ public class GenericServer {
 
         try {
             port = Integer.parseInt(args[0]);
+            portServer = Integer.parseInt(args[1]);
+            name = (String) args[2];
 
             // Crea un Registry en el puerto especificado
             LocateRegistry.createRegistry(port);
@@ -88,6 +100,6 @@ public class GenericServer {
             System.out.println(e);
         }
 
-        new GenericServer(port);
+        new GenericServer(port,portServer, name);
     }
 }
