@@ -1,0 +1,14 @@
+/* AUTOMATICALLY GENERATED ON Thu Feb 27 13:58:56 VET 2014*/
+/* DO NOT EDIT */
+
+grant{
+	permission java.security.AllPermission;
+};
+
+grant {
+  permission java.net.SocketPermission "127.0.0.1", "connect,accept,resolve";
+};
+
+grant {
+  permission java.net.SocketPermission "10.0.0.37", "connect,accept,resolve";
+};
