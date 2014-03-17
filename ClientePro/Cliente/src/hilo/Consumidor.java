@@ -7,7 +7,6 @@
 package hilo;
 
 import Cliente.Tarea;
-import Cliente.Tarea_Impl;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -38,12 +37,13 @@ public class Consumidor extends Thread{
           
             String nombreServicio = "Motor_Computo";
             System.out.println("Buscando Servicio... host: "+this.host+" port: "+this.port);
-            Ejecutor e = (Ejecutor) Naming.lookup("rmi://" + host + ":" + port + "/" + nombreServicio);
+            Ejecutor ejecutor = (Ejecutor) Naming.lookup("rmi://" + host + ":" + port + "/" + nombreServicio);
             System.out.println("Servicio buscado... host: "+this.host+" port: "+this.port);
-            Tarea tarea = new Tarea_Impl();
+            
             boolean respuesta;
+            //Tarea tarea = new Tarea_Impl();
             //respuesta=e.ejecutar(tarea); //Esta mandando a ejecutar un procedimiento remoto con un objeto local!!
-            respuesta = e.ejecutar();
+            respuesta = ejecutor.ejecutar();
             if (respuesta) {
                 System.out.println("Se ejecuta correctamente");
             } else {

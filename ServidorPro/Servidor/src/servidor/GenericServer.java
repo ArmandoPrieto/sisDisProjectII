@@ -3,26 +3,30 @@ package servidor;
 import hilo.EscuchaMulticast;
 import hilo.EnviaMulticast;
 import hilo.EscuchaUnicast;
+import hilo.TaskThread;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import servidor.Ejecutor;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import java.lang.*;
 
-// este ejemplo fue realizado con fines ilustrativos
-// no se hace enfasis en todas las verificaciones que
-// que una aplicacion deberia tener.
-// Fue conpilado y corrido usando jdk-1.2.2
+
 public class GenericServer {
 
     public int port;
     public int portServer;
     public int ipAddress;
     public String name;
-
+    public Ejecutor imp;
     public List<NodoServidor> nodoServidorList;
+    public TaskThread task;
 
     public GenericServer(int port,int portServer, String name) {
         this.nodoServidorList = new ArrayList<>();
@@ -38,13 +42,11 @@ public class GenericServer {
             System.out.println("Registrando multicast...");
             this.startMulticast();
             System.out.println("Multicast registrado...");
-            Ejecutor imp = new Ejecutor_Imp();
-            String nombreServicio = "Motor_Computo";
-            // Registra con el nombre CalculatorService al objeto c 
-            // en el Registry que se encuentra el el host <localhost>
-            // y puerto <port>			
-            Naming.rebind("rmi://localhost:" + port + "/" + nombreServicio, imp);
-            System.out.println("publicando y escuchando peticiones...");
+            
+           task = new TaskThread(this);
+           task.start();
+           
+           
 
         } catch (Exception e) {
             System.out.println("Trouble: " + e);
@@ -73,6 +75,24 @@ public class GenericServer {
 
     }
 
+    public void stopOtherServers(int task){
+        System.out.println("Intentando detener");
+        String datoString = "3|"+this.portServer+"|"+this.name+"|";
+        MulticastSocket enviador;
+        try {
+            enviador = new MulticastSocket(6789);
+            byte[] dato;
+            dato = datoString.getBytes();
+            DatagramPacket dgp = new DatagramPacket(dato, dato.length, InetAddress.getByName("230.0.0.1"), 6789);
+            // Envío
+            enviador.send(dgp);
+            System.out.println("Deteniendo servidores");
+        } catch (IOException ex) {
+            Logger.getLogger(EnviaMulticast.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    //Enviar mensaje por multicast
+    
+    }
     public static void main(String args[]) {
         int nroServ = 0, port = 0,portServer=0;
         String name="";

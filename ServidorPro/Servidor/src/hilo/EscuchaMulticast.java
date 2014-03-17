@@ -46,7 +46,7 @@ public class EscuchaMulticast extends Thread {
             
             DatagramPacket dgp = new DatagramPacket(dato, dato.length);
             
-            while (server.nodoServidorList.size() < 2) {
+            while (true) {
                 escucha.receive(dgp);
                 System.out.println("Escuchado");
 // Obtención del dato ya relleno.
@@ -86,12 +86,21 @@ public class EscuchaMulticast extends Thread {
                     
                         enviarAck(dgp.getAddress(),Integer.parseInt(serverPort));
                 
+                }else if ((tipoMensaje.compareTo("3") == 0)  && (server.name.compareTo(serverName)!=0)) {
+                
+                    server.task.interrupt();
+                    System.out.println("Tarea detenida en servidor "+this.server.name);
+                    
                 }
                
+               if(server.nodoServidorList.size() >= 2){
+                synchronized (server) {
+                        server.notify();
+                }
+               }
+               
             }
-            synchronized (server) {
-                server.notify();
-            }
+            
 
         } catch (Exception ex) {
             System.out.println(ex);
