@@ -16,10 +16,19 @@ public class NodoServidor {
     String nombre;
     String ip;
     int puertoUnicast;
-
-   
+    boolean isActive;
     List<Archivo> archivoList;
 
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+   
+    
     public String getNombre() {
         return nombre;
     }

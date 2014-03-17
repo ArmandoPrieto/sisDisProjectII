@@ -60,6 +60,7 @@ public class EscuchaMulticast extends Thread {
                 NodoServidor nodo = new NodoServidor();
                     nodo.setNombre(serverName);
                     nodo.setIp(dgp.getSocketAddress().toString());
+                    nodo.setIsActive(true);
                     
                 if ((tipoMensaje.compareTo("0") == 0) && (server.name.compareTo(serverName)!=0)) {
                     //Identificacion
@@ -81,6 +82,10 @@ public class EscuchaMulticast extends Thread {
                         System.out.println("Ack Recibido");
                        
                     
+                }else if ((tipoMensaje.compareTo("2") == 0)  && (server.name.compareTo(serverName)!=0)) {
+                    
+                        enviarAck(dgp.getAddress(),Integer.parseInt(serverPort));
+                
                 }
                
             }

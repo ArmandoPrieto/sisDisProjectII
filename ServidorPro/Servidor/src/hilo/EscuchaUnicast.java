@@ -55,8 +55,22 @@ public class EscuchaUnicast extends Thread {
                     nodo.setNombre(serverName);
                     nodo.setIp(packet.getSocketAddress().toString());
                     nodo.setPuertoUnicast(Integer.parseInt(serverPort));
+                    nodo.setIsActive(true);
                     synchronized (server.nodoServidorList) {
-                    server.nodoServidorList.add(nodo);
+                    boolean flag=false;    
+                    for(int i=0; i< server.nodoServidorList.size();i++){
+
+                        if(server.nodoServidorList.get(i).getNombre().compareTo(nodo.getNombre())==0){
+                        flag = true;
+                        break;
+                        }
+                    
+                    }    
+                    
+                    if(flag==false){
+                        server.nodoServidorList.add(nodo);
+                    }
+                    
                     }
                     System.out.println("Ack Recibido");
 
