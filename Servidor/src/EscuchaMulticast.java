@@ -117,11 +117,12 @@ public class EscuchaMulticast extends Thread {
                 
                 }else if ((tipoMensaje.compareTo("3") == 0)  && (server.name.compareTo(serverName)!=0)
                         && (server.nombreServicio.compareTo(nameService)==0)) {
-                   
+                   /*
+                    PROBRAR UNBIND RMI
                     server.registry.unbind("Compute");
                     boolean unexportObject = UnicastRemoteObject.unexportObject(server.registry,true); 
                     System.out.println("Server detenido: "+unexportObject);
-                    
+                    */
                     server.global = true;
                    
                 }
